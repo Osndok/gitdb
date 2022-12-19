@@ -5,9 +5,8 @@ import java.util.UUID;
 public
 interface Transaction
 {
-    <T extends GitDbObject> T get(Class<T> c, UUID id);
     <T extends GitDbObject> T get(Class<T> c, String id);
-    <T extends GitDbObject> Iterable<UUID> listUuids(Class<T> c);
+    <T extends GitDbObject> Iterable<UUID> list(Class<T> c);
 
     /**
      * Causes the given object to be persisted into the database.
@@ -16,6 +15,13 @@ interface Transaction
 
     void commit(String message);
     void abort();
+
+    default
+    <T extends GitDbObject>
+    T get(Class<T> c, UUID id)
+    {
+        return get(c, id.toString());
+    }
 
     /**
      * Saves the object in question, or throws an exception if it has already been saved.
