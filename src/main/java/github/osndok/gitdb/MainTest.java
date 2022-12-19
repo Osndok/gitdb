@@ -1,10 +1,9 @@
-package github.osndok;
+package github.osndok.gitdb;
 
-import github.osndok.pathing.StupidlySimplePathing;
+import github.osndok.gitdb.pathing.StupidlySimplePathing;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Random;
 
 /**

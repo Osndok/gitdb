@@ -1,7 +1,7 @@
-package github.osndok.pathing;
+package github.osndok.gitdb.pathing;
 
-import github.osndok.GitDbObject;
-import github.osndok.PathingScheme;
+import github.osndok.gitdb.GitDbObject;
+import github.osndok.gitdb.PathingScheme;
 
 import java.io.File;
 import java.util.HashSet;

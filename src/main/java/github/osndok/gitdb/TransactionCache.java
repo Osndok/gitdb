@@ -1,4 +1,4 @@
-package github.osndok;
+package github.osndok.gitdb;
 
 import java.util.*;
 

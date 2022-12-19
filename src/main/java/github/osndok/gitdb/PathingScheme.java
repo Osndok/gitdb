@@ -1,4 +1,4 @@
-package github.osndok;
+package github.osndok.gitdb;
 
 import java.io.File;
 import java.util.UUID;

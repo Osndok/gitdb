@@ -1,4 +1,4 @@
-package github.osndok;
+package github.osndok.gitdb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -171,7 +171,8 @@ class SingleThreadedDatabase implements Database
             else
             if (object._db_transaction_id != transactionId)
             {
-                throw new IllegalArgumentException("Cannot carry objects from one transaction to another (hint multiple commit() is okay)");
+                throw new IllegalArgumentException("Cannot effect objects from one transaction in another"+
+                                                   " (hint: multiple calls to commit() is okay)");
             }
 
             if (object._db_id == null)
