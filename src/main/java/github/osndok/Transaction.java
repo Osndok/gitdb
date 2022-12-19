@@ -5,7 +5,6 @@ import java.util.UUID;
 public
 interface Transaction
 {
-    <T extends GitDbObject> T get(Class<T> c, String id);
     <T extends GitDbObject> Iterable<UUID> list(Class<T> c);
 
     /**
@@ -15,6 +14,13 @@ interface Transaction
 
     void commit(String message);
     void abort();
+
+    default
+    <T extends GitDbObject>
+    T get(Class<T> c, String id)
+    {
+        return get(c, UUID.fromString(id));
+    }
 
     default
     <T extends GitDbObject>

@@ -9,6 +9,7 @@ public abstract
 class GitDbObject
 {
     UUID _db_id;
+    UUID _db_transaction_id;
 
     /**
      * If null, this object has not been persisted into the database; otherwise, it represents
