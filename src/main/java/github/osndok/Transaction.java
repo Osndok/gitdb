@@ -12,6 +12,8 @@ interface Transaction
      */
     void save(GitDbObject object);
 
+    void delete(GitDbObject object);
+
     void commit(String message);
     void abort();
 

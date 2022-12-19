@@ -34,7 +34,9 @@ class SingleThreadedDatabase implements Database
     public
     Transaction startTransaction()
     {
-        return activeTransaction = new SingleThreadedTransaction();
+        var retval = activeTransaction = new SingleThreadedTransaction();
+        git().withArgs("stash");
+        return retval;
     }
 
     ProcBuilder git()
@@ -125,6 +127,17 @@ class SingleThreadedDatabase implements Database
             var file = pathingScheme.getObjectPath(gitRepo, object);
             writeJsonFile(object, file);
             git().withArgs("add", file.toString()).run();
+            transactionCache.put(object);
+        }
+
+        @Override
+        public
+        void delete(final GitDbObject object)
+        {
+            mustBeCurrentTransaction();
+            maybeAssignIds(object);
+            var file = pathingScheme.getObjectPath(gitRepo, object);
+            git().withArgs("rm", "-f", file.toString()).run();
             transactionCache.put(object);
         }
 
