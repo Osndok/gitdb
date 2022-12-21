@@ -5,6 +5,7 @@ import github.osndok.gitdb.pathing.StupidlySimplePathing;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * Unit test for simple App.
@@ -49,5 +50,6 @@ public class MainTest
     static class Thing extends GitDbObject
     {
         public int luckyNumber = RANDOM.nextInt();
+        public UUID extraUuid = UUID.randomUUID();
     }
 }
