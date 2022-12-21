@@ -135,6 +135,19 @@ class SingleThreadedDatabase implements Database
             var create = object._db_id == null;
             mustBeCurrentTransaction();
             maybeAssignIds(object);
+
+            if (object instanceof IGitDbReactiveObject hook)
+            {
+                if (create)
+                {
+                    hook.beforeCreate(SingleThreadedDatabase.this);
+                }
+                else
+                {
+                    hook.beforeUpdate(SingleThreadedDatabase.this);
+                }
+            }
+
             var file = pathingScheme.getObjectPath(gitRepo, object);
             writeJsonFile(object, file);
             git().withArgs("add", file.toString()).run();
@@ -159,6 +172,12 @@ class SingleThreadedDatabase implements Database
         {
             mustBeCurrentTransaction();
             maybeAssignIds(object);
+
+            if (object instanceof IGitDbReactiveObject hook)
+            {
+                hook.beforeDelete(SingleThreadedDatabase.this);
+            }
+
             var file = pathingScheme.getObjectPath(gitRepo, object);
             git().withArgs("rm", "-f", file.toString()).run();
             transactionCache.put(object);
@@ -174,6 +193,15 @@ class SingleThreadedDatabase implements Database
         void commit(final String message)
         {
             mustBeCurrentTransaction();
+
+            for (GitDbObject value : transactionCache.values())
+            {
+                if (value instanceof IGitDbReactiveObject hook)
+                {
+                    hook.beforeTransactionCommit(SingleThreadedDatabase.this);
+                }
+            }
+
             git().withArgs("commit", "--message", message).run();
             // NOTE: We do not clear active transaction, so you can call commit() multiple times.
 
@@ -192,6 +220,15 @@ class SingleThreadedDatabase implements Database
         {
             // Allow for calling abort() multiple times.
             mustBeCurrentTransaction();
+
+            for (GitDbObject value : transactionCache.values())
+            {
+                if (value instanceof IGitDbReactiveObject hook)
+                {
+                    hook.beforeTransactionAbort(SingleThreadedDatabase.this);
+                }
+            }
+
             git().withArgs("reset", "--hard").run();
             // NOTE: We clear ourself from being the active transaction to protect objects in-memory from invalid UUIDs.
             activeTransaction = null;

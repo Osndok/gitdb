@@ -10,6 +10,41 @@ class GitDbReactiveObject
 {
     @Override
     public
+    void beforeCreate(final Database database)
+    {
+
+    }
+
+    @Override
+    public
+    void beforeUpdate(final Database database)
+    {
+
+    }
+
+    @Override
+    public
+    void beforeDelete(final Database database)
+    {
+
+    }
+
+    @Override
+    public
+    void beforeTransactionCommit(final Database database)
+    {
+
+    }
+
+    @Override
+    public
+    void beforeTransactionAbort(final Database database)
+    {
+
+    }
+
+    @Override
+    public
     void onCreated(final Database database)
     {
 
