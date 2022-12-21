@@ -2,6 +2,12 @@ package github.osndok.gitdb.hooks;
 
 import github.osndok.gitdb.Database;
 
+/**
+ * If a database object implements this interface, it becomes "self-aware", and will have various methods run
+ * at key points in the object's lifecycle. Since most of the time an object only wants one or two hooks,
+ * consider using GitDbReactiveObject as a base class, which allows you to override just the hooks you want
+ * to use (as it has empty implementations of all these).
+ */
 public
 interface IGitDbReactiveObject
 {
