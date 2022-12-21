@@ -1,6 +1,7 @@
 package github.osndok.gitdb.hooks;
 
 import github.osndok.gitdb.Database;
+import github.osndok.gitdb.Transaction;
 
 /**
  * If a database object implements this interface, it becomes "self-aware", and will have various methods run
@@ -11,15 +12,15 @@ import github.osndok.gitdb.Database;
 public
 interface GitDbReactiveObject
 {
-    void beforeCreate(Database database);
-    void beforeUpdate(Database database);
-    void beforeDelete(Database database);
-    void beforeTransactionCommit(Database database);
-    void beforeTransactionAbort(Database database);
-    void onCreated(Database database);
-    void onLoaded(Database database);
-    void onUpdated(Database database);
-    void onDeleted(Database database);
-    void onTransactionCommitted(Database database);
-    void onTransactionAborted(Database database);
+    void beforeCreate(Database database, Transaction transaction);
+    void beforeUpdate(Database database, Transaction transaction);
+    void beforeDelete(Database database, Transaction transaction);
+    void beforeTransactionCommit(Database database, Transaction transaction);
+    void beforeTransactionAbort(Database database, Transaction transaction);
+    void onCreated(Database database, Transaction transaction);
+    void onLoaded(Database database, Transaction transaction);
+    void onUpdated(Database database, Transaction transaction);
+    void onDeleted(Database database, Transaction transaction);
+    void onTransactionCommitted(Database database, Transaction transaction);
+    void onTransactionAborted(Database database, Transaction transaction);
 }

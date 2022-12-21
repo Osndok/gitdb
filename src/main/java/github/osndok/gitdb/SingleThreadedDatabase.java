@@ -112,7 +112,7 @@ class SingleThreadedDatabase implements Database
 
             if (object instanceof GitDbReactiveObject hook)
             {
-                hook.onLoaded(SingleThreadedDatabase.this);
+                hook.onLoaded(SingleThreadedDatabase.this, this);
             }
 
             return object;
@@ -140,11 +140,11 @@ class SingleThreadedDatabase implements Database
             {
                 if (create)
                 {
-                    hook.beforeCreate(SingleThreadedDatabase.this);
+                    hook.beforeCreate(SingleThreadedDatabase.this, this);
                 }
                 else
                 {
-                    hook.beforeUpdate(SingleThreadedDatabase.this);
+                    hook.beforeUpdate(SingleThreadedDatabase.this, this);
                 }
             }
 
@@ -157,11 +157,11 @@ class SingleThreadedDatabase implements Database
             {
                 if (create)
                 {
-                    hook.onCreated(SingleThreadedDatabase.this);
+                    hook.onCreated(SingleThreadedDatabase.this, this);
                 }
                 else
                 {
-                    hook.onUpdated(SingleThreadedDatabase.this);
+                    hook.onUpdated(SingleThreadedDatabase.this, this);
                 }
             }
         }
@@ -175,7 +175,7 @@ class SingleThreadedDatabase implements Database
 
             if (object instanceof GitDbReactiveObject hook)
             {
-                hook.beforeDelete(SingleThreadedDatabase.this);
+                hook.beforeDelete(SingleThreadedDatabase.this, this);
             }
 
             var file = pathingScheme.getObjectPath(gitRepo, object);
@@ -184,7 +184,7 @@ class SingleThreadedDatabase implements Database
 
             if (object instanceof GitDbReactiveObject hook)
             {
-                hook.onDeleted(SingleThreadedDatabase.this);
+                hook.onDeleted(SingleThreadedDatabase.this, this);
             }
         }
 
@@ -198,7 +198,7 @@ class SingleThreadedDatabase implements Database
             {
                 if (value instanceof GitDbReactiveObject hook)
                 {
-                    hook.beforeTransactionCommit(SingleThreadedDatabase.this);
+                    hook.beforeTransactionCommit(SingleThreadedDatabase.this, this);
                 }
             }
 
@@ -209,7 +209,7 @@ class SingleThreadedDatabase implements Database
             {
                 if (value instanceof GitDbReactiveObject hook)
                 {
-                    hook.onTransactionCommitted(SingleThreadedDatabase.this);
+                    hook.onTransactionCommitted(SingleThreadedDatabase.this, this);
                 }
             }
         }
@@ -225,7 +225,7 @@ class SingleThreadedDatabase implements Database
             {
                 if (value instanceof GitDbReactiveObject hook)
                 {
-                    hook.beforeTransactionAbort(SingleThreadedDatabase.this);
+                    hook.beforeTransactionAbort(SingleThreadedDatabase.this, this);
                 }
             }
 
@@ -237,7 +237,7 @@ class SingleThreadedDatabase implements Database
             {
                 if (value instanceof GitDbReactiveObject hook)
                 {
-                    hook.onTransactionAborted(SingleThreadedDatabase.this);
+                    hook.onTransactionAborted(SingleThreadedDatabase.this, this);
                 }
             }
         }
