@@ -211,7 +211,14 @@ class SingleThreadedDatabase implements Database
                 }
             }
 
-            git().withArgs("commit", "--date", Long.toString(startTime.getTime()/1000), "--message", message).run();
+            var date = Long.toString(startTime.getTime()/1000);
+
+            git()
+                    .withArgs("commit", "--message", message)
+                    .withVar("GIT_AUTHOR_DATE", date)
+                    .withVar("GIT_COMMITTER_DATE", date)
+                    .run();
+
             // NOTE: We do not clear active transaction, so you can call commit() multiple times.
 
             for (GitDbObject value : transactionCache.values())
