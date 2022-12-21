@@ -2,7 +2,7 @@ package github.osndok.gitdb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import github.osndok.gitdb.hooks.IGitDbReactiveObject;
+import github.osndok.gitdb.hooks.GitDbReactiveObject;
 import org.buildobjects.process.ProcBuilder;
 
 import java.io.File;
@@ -110,7 +110,7 @@ class SingleThreadedDatabase implements Database
 
             transactionCache.put(object);
 
-            if (object instanceof IGitDbReactiveObject hook)
+            if (object instanceof GitDbReactiveObject hook)
             {
                 hook.onLoaded(SingleThreadedDatabase.this);
             }
@@ -136,7 +136,7 @@ class SingleThreadedDatabase implements Database
             mustBeCurrentTransaction();
             maybeAssignIds(object);
 
-            if (object instanceof IGitDbReactiveObject hook)
+            if (object instanceof GitDbReactiveObject hook)
             {
                 if (create)
                 {
@@ -153,7 +153,7 @@ class SingleThreadedDatabase implements Database
             git().withArgs("add", file.toString()).run();
             transactionCache.put(object);
 
-            if (object instanceof IGitDbReactiveObject hook)
+            if (object instanceof GitDbReactiveObject hook)
             {
                 if (create)
                 {
@@ -173,7 +173,7 @@ class SingleThreadedDatabase implements Database
             mustBeCurrentTransaction();
             maybeAssignIds(object);
 
-            if (object instanceof IGitDbReactiveObject hook)
+            if (object instanceof GitDbReactiveObject hook)
             {
                 hook.beforeDelete(SingleThreadedDatabase.this);
             }
@@ -182,7 +182,7 @@ class SingleThreadedDatabase implements Database
             git().withArgs("rm", "-f", file.toString()).run();
             transactionCache.put(object);
 
-            if (object instanceof IGitDbReactiveObject hook)
+            if (object instanceof GitDbReactiveObject hook)
             {
                 hook.onDeleted(SingleThreadedDatabase.this);
             }
@@ -196,7 +196,7 @@ class SingleThreadedDatabase implements Database
 
             for (GitDbObject value : transactionCache.values())
             {
-                if (value instanceof IGitDbReactiveObject hook)
+                if (value instanceof GitDbReactiveObject hook)
                 {
                     hook.beforeTransactionCommit(SingleThreadedDatabase.this);
                 }
@@ -207,7 +207,7 @@ class SingleThreadedDatabase implements Database
 
             for (GitDbObject value : transactionCache.values())
             {
-                if (value instanceof IGitDbReactiveObject hook)
+                if (value instanceof GitDbReactiveObject hook)
                 {
                     hook.onTransactionCommitted(SingleThreadedDatabase.this);
                 }
@@ -223,7 +223,7 @@ class SingleThreadedDatabase implements Database
 
             for (GitDbObject value : transactionCache.values())
             {
-                if (value instanceof IGitDbReactiveObject hook)
+                if (value instanceof GitDbReactiveObject hook)
                 {
                     hook.beforeTransactionAbort(SingleThreadedDatabase.this);
                 }
@@ -235,7 +235,7 @@ class SingleThreadedDatabase implements Database
 
             for (GitDbObject value : transactionCache.values())
             {
-                if (value instanceof IGitDbReactiveObject hook)
+                if (value instanceof GitDbReactiveObject hook)
                 {
                     hook.onTransactionAborted(SingleThreadedDatabase.this);
                 }
