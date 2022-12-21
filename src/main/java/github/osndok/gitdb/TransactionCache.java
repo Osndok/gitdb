@@ -17,4 +17,9 @@ class TransactionCache
     {
         objects.put(object._db_id, object);
     }
+
+    Collection<GitDbObject> values()
+    {
+        return objects.values();
+    }
 }

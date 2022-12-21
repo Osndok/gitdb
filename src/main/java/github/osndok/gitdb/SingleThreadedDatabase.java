@@ -2,6 +2,7 @@ package github.osndok.gitdb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import github.osndok.gitdb.hooks.IGitDbReactiveObject;
 import org.buildobjects.process.ProcBuilder;
 
 import java.io.File;
@@ -109,6 +110,11 @@ class SingleThreadedDatabase implements Database
 
             transactionCache.put(object);
 
+            if (object instanceof IGitDbReactiveObject hook)
+            {
+                hook.onLoaded(SingleThreadedDatabase.this);
+            }
+
             return object;
         }
 
@@ -126,12 +132,25 @@ class SingleThreadedDatabase implements Database
         public
         void save(final GitDbObject object)
         {
+            var create = object._db_id == null;
             mustBeCurrentTransaction();
             maybeAssignIds(object);
             var file = pathingScheme.getObjectPath(gitRepo, object);
             writeJsonFile(object, file);
             git().withArgs("add", file.toString()).run();
             transactionCache.put(object);
+
+            if (object instanceof IGitDbReactiveObject hook)
+            {
+                if (create)
+                {
+                    hook.onCreated(SingleThreadedDatabase.this);
+                }
+                else
+                {
+                    hook.onUpdated(SingleThreadedDatabase.this);
+                }
+            }
         }
 
         @Override
@@ -143,6 +162,11 @@ class SingleThreadedDatabase implements Database
             var file = pathingScheme.getObjectPath(gitRepo, object);
             git().withArgs("rm", "-f", file.toString()).run();
             transactionCache.put(object);
+
+            if (object instanceof IGitDbReactiveObject hook)
+            {
+                hook.onDeleted(SingleThreadedDatabase.this);
+            }
         }
 
         @Override
@@ -152,6 +176,14 @@ class SingleThreadedDatabase implements Database
             mustBeCurrentTransaction();
             git().withArgs("commit", "--message", message).run();
             // NOTE: We do not clear active transaction, so you can call commit() multiple times.
+
+            for (GitDbObject value : transactionCache.values())
+            {
+                if (value instanceof IGitDbReactiveObject hook)
+                {
+                    hook.onTransactionCommitted(SingleThreadedDatabase.this);
+                }
+            }
         }
 
         @Override
@@ -163,6 +195,14 @@ class SingleThreadedDatabase implements Database
             git().withArgs("reset", "--hard").run();
             // NOTE: We clear ourself from being the active transaction to protect objects in-memory from invalid UUIDs.
             activeTransaction = null;
+
+            for (GitDbObject value : transactionCache.values())
+            {
+                if (value instanceof IGitDbReactiveObject hook)
+                {
+                    hook.onTransactionAborted(SingleThreadedDatabase.this);
+                }
+            }
         }
 
         private
