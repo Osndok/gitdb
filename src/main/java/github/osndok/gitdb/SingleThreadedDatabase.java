@@ -39,6 +39,10 @@ class SingleThreadedDatabase implements Database
         return retval;
     }
 
+    /**
+     * Exposed to allow easy tweaks (e.g. to the repo's user/email configuration).
+     */
+    public
     ProcBuilder git()
     {
         return new ProcBuilder("git").withWorkingDirectory(gitRepo);
