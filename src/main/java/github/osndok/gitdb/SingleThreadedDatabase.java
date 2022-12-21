@@ -6,6 +6,7 @@ import github.osndok.gitdb.hooks.GitDbReactiveObject;
 import org.buildobjects.process.ProcBuilder;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
@@ -311,10 +312,20 @@ class SingleThreadedDatabase implements Database
         try
         {
             objectMapper.writeValue(file, object);
+            kludge_AppendTrailingNewline(file);
         }
         catch (IOException e)
         {
             throw new RuntimeException(e);
+        }
+    }
+
+    private
+    void kludge_AppendTrailingNewline(final File file) throws IOException
+    {
+        try ( var out = new FileWriter(file, true))
+        {
+            out.append('\n');
         }
     }
 }
