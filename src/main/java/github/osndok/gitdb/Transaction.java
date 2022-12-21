@@ -1,10 +1,13 @@
 package github.osndok.gitdb;
 
+import java.util.Date;
 import java.util.UUID;
 
 public
 interface Transaction
 {
+    Date getStartTime();
+
     <T extends GitDbObject> Iterable<UUID> list(Class<T> c);
 
     /**

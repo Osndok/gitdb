@@ -7,6 +7,7 @@ import org.buildobjects.process.ProcBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.UUID;
 
 public
@@ -70,6 +71,7 @@ class SingleThreadedDatabase implements Database
     private
     class SingleThreadedTransaction implements Transaction
     {
+        private final Date startTime = new Date();
         private final UUID transactionId = UUID.randomUUID();
         private final TransactionCache transactionCache = new TransactionCache();
 
@@ -116,6 +118,13 @@ class SingleThreadedDatabase implements Database
             }
 
             return object;
+        }
+
+        @Override
+        public
+        Date getStartTime()
+        {
+            return startTime;
         }
 
         @Override
@@ -202,7 +211,7 @@ class SingleThreadedDatabase implements Database
                 }
             }
 
-            git().withArgs("commit", "--message", message).run();
+            git().withArgs("commit", "--date", Long.toString(startTime.getTime()/1000), "--message", message).run();
             // NOTE: We do not clear active transaction, so you can call commit() multiple times.
 
             for (GitDbObject value : transactionCache.values())
