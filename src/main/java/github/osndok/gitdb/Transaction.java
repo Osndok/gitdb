@@ -56,7 +56,18 @@ interface Transaction
      */
     void forceOverwrite(UUID id, GitDbObject object);
 
-    void delete(GitDbObject object);
+    default
+    void delete(GitDbObject object)
+    {
+        delete(object.getClass(), object._db_id);
+    }
+
+    default
+    <T extends GitDbObject>
+    void delete(Class<T> c, UUID id)
+    {
+        delete(get(c, id));
+    }
 
     void commit(String message);
     void abort();
