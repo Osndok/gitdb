@@ -50,6 +50,12 @@ interface Transaction
      */
     void save(GitDbObject object);
 
+    /**
+     * Similar to 'save', but less safe b/c it accepts objects from other transactions and those
+     * previously saved under a different id.
+     */
+    void forceOverwrite(UUID id, GitDbObject object);
+
     void delete(GitDbObject object);
 
     void commit(String message);

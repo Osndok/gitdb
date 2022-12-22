@@ -178,6 +178,29 @@ class SingleThreadedDatabase implements Database
 
         @Override
         public
+        void forceOverwrite(final UUID id, final GitDbObject object)
+        {
+            object._db_id = id;
+            object._db_transaction_id = transactionId;
+
+            if (object instanceof GitDbReactiveObject hook)
+            {
+                hook.beforeUpdate(SingleThreadedDatabase.this, this);
+            }
+
+            var file = pathingScheme.getObjectPath(gitRepo, object);
+            writeJsonFile(object, file);
+            git().withArgs("add", file.toString()).run();
+            transactionCache.put(object);
+
+            if (object instanceof GitDbReactiveObject hook)
+            {
+                hook.onUpdated(SingleThreadedDatabase.this, this);
+            }
+        }
+
+        @Override
+        public
         void delete(final GitDbObject object)
         {
             mustBeCurrentTransaction();
