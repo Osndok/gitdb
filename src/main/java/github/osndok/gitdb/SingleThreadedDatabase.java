@@ -38,7 +38,7 @@ class SingleThreadedDatabase implements Database
     Transaction startTransaction()
     {
         var retval = activeTransaction = new SingleThreadedTransaction();
-        git().withArgs("stash");
+        git().withArgs("stash").run();
         return retval;
     }
 
