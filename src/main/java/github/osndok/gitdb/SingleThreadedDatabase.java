@@ -131,7 +131,7 @@ class SingleThreadedDatabase implements Database
         @Override
         public
         <T extends GitDbObject>
-        Iterable<UUID> list(final Class<T> c)
+        Iterable<UUID> listIds(final Class<T> c)
         {
             mustBeCurrentTransaction();
             var classId = pathingScheme.getClassId(gitRepo, c);

@@ -1,14 +1,49 @@
 package github.osndok.gitdb;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public
 interface Transaction
 {
     Date getStartTime();
 
-    <T extends GitDbObject> Iterable<UUID> list(Class<T> c);
+    <T extends GitDbObject>
+    Iterable<UUID> listIds(Class<T> c);
+
+    default
+    <T extends GitDbObject>
+    Iterable<T> listObjects(Class<T> c)
+    {
+        var results = new ArrayList<T>();
+        for (UUID uuid : listIds(c))
+        {
+            T t = get(c, uuid);
+            results.add(t);
+        }
+        return results;
+    }
+
+    /**
+     * Behold the shame of v0. Nice and clean from the consumer side, but from the implementation side this
+     * materializes every object in order to perform the test, O(n)... scanning every object.
+     */
+    default
+    <T extends GitDbObject>
+    Iterable<T> search(Class<T> c, Predicate<T> test)
+    {
+        var results = new ArrayList<T>();
+        for (T t : listObjects(c))
+        {
+            if (test.test(t))
+            {
+                results.add(t);
+            }
+        }
+        return results;
+    }
 
     /**
      * Causes the given object to be persisted into the database.

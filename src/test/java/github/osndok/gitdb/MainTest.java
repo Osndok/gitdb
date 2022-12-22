@@ -4,6 +4,7 @@ import github.osndok.gitdb.pathing.StupidlySimplePathing;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
@@ -35,7 +36,7 @@ public class MainTest
 
         trans.commit("from main-test");
 
-        assert trans.list(Thing.class).iterator().next().equals(id);
+        assert trans.listIds(Thing.class).iterator().next().equals(id);
 
         var cached = trans.get(Thing.class, id);
         assert cached == thing;
@@ -51,5 +52,6 @@ public class MainTest
     {
         public int luckyNumber = RANDOM.nextInt();
         public UUID extraUuid = UUID.randomUUID();
+        public Date importantDate = new Date();
     }
 }
