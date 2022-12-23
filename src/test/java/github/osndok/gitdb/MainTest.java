@@ -48,7 +48,7 @@ public class MainTest
 
         var refetch = trans.get(Thing.class, id);
         assert refetch != cached;
-        assert refetch.luckyNumber == cached.luckyNumber;
+        assert refetch.integerPrimitive == cached.integerPrimitive;
 
         var file = db.getFile(id, Thing.class);
         System.out.println(ProcBuilder.run("cat", file.toString()));
@@ -56,9 +56,14 @@ public class MainTest
 
     static class Thing extends GitDbObject
     {
-        public int luckyNumber = RANDOM.nextInt();
-        public UUID extraUuid = UUID.randomUUID();
-        public Date importantDate = new Date();
-        //public Duration duration = Duration.of(3, ChronoUnit.DAYS);
+        public int integerPrimitive = RANDOM.nextInt();
+        public Integer integer = 1234;
+        public Integer integerNull;
+        public UUID uuid = UUID.randomUUID();
+        public UUID uuidNull;
+        public Date date = new Date();
+        public Date dateNull;
+        public Duration duration = Duration.of(3, ChronoUnit.DAYS);
+        public Duration durationNull;
     }
 }

@@ -3,9 +3,9 @@ package github.osndok.gitdb;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.util.ObjectBuffer;
 import github.osndok.gitdb.hooks.GitDbReactiveObject;
 import github.osndok.gitdb.pathing.StupidlySimplePathing;
+import github.osndok.gitdb.serialization.DefaultGitDbDataFormats;
 import org.buildobjects.process.ProcBuilder;
 
 import java.io.File;
@@ -35,7 +35,8 @@ class SingleThreadedDatabase implements Database
         this.objectMapper = JsonMapper.builder()
                 .findAndAddModules()
                 .enable(SerializationFeature.INDENT_OUTPUT)
-                .build();
+                .build()
+                .registerModule(new DefaultGitDbDataFormats());
     }
 
     public
