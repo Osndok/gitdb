@@ -2,7 +2,10 @@ package github.osndok.gitdb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.util.ObjectBuffer;
 import github.osndok.gitdb.hooks.GitDbReactiveObject;
+import github.osndok.gitdb.pathing.StupidlySimplePathing;
 import org.buildobjects.process.ProcBuilder;
 
 import java.io.File;
@@ -14,8 +17,8 @@ import java.util.UUID;
 public
 class SingleThreadedDatabase implements Database
 {
-    final
-    ObjectMapper objectMapper = new ObjectMapper();
+    public final
+    ObjectMapper objectMapper;
 
     final
     File gitRepo;
@@ -24,11 +27,23 @@ class SingleThreadedDatabase implements Database
     PathingScheme pathingScheme;
 
     public
-    SingleThreadedDatabase(final File gitRepo, final PathingScheme pathingScheme)
+    SingleThreadedDatabase(final File gitRepo)
+    {
+        this.gitRepo = gitRepo;
+        // TODO: Save/load these config from the repo, keeping compat, but using the best currently known by default.
+        this.pathingScheme = new StupidlySimplePathing();
+        this.objectMapper = JsonMapper.builder()
+                .findAndAddModules()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
+    }
+
+    public
+    SingleThreadedDatabase(final File gitRepo, final PathingScheme pathingScheme, final ObjectMapper objectMapper)
     {
         this.gitRepo = gitRepo;
         this.pathingScheme = pathingScheme;
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        this.objectMapper = objectMapper;
     }
 
     Transaction activeTransaction;
@@ -101,8 +116,7 @@ class SingleThreadedDatabase implements Database
                 return existing;
             }
 
-            var classId = pathingScheme.getClassId(gitRepo, c);
-            var file = pathingScheme.getObjectPath(gitRepo, classId, uuid);
+            var file = getFile(uuid, c);
             var object = fromJsonFile(c, file);
 
             if (object == null)
@@ -323,6 +337,13 @@ class SingleThreadedDatabase implements Database
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    <T extends GitDbObject>
+    File getFile(final UUID uuid, final Class<T> c)
+    {
+        var classId = pathingScheme.getClassId(gitRepo, c);
+        return pathingScheme.getObjectPath(gitRepo, classId, uuid);
     }
 
     private
