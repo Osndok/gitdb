@@ -17,8 +17,15 @@ interface Transaction
     <T extends GitDbObject>
     Iterable<T> listObjects(Class<T> c)
     {
+        return listObjects(c, listIds(c));
+    }
+
+    default
+    <T extends GitDbObject>
+    Iterable<T> listObjects(Class<T> c, Iterable<UUID> uuids)
+    {
         var results = new ArrayList<T>();
-        for (UUID uuid : listIds(c))
+        for (UUID uuid : uuids)
         {
             T t = get(c, uuid);
             results.add(t);
