@@ -1,5 +1,7 @@
 package github.osndok.gitdb;
 
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -37,6 +39,11 @@ class SingleThreadedDatabase implements Database
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .build()
                 .registerModule(new DefaultGitDbDataFormats());
+
+        // Put each array value on its own line, for easier diffs and merges.
+        var prettyPrinter = new DefaultPrettyPrinter();
+        prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
+        objectMapper.setDefaultPrettyPrinter(prettyPrinter);
     }
 
     public

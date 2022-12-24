@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -65,5 +66,7 @@ public class MainTest
         public Date dateNull;
         public Duration duration = Duration.of(3, ChronoUnit.DAYS);
         public Duration durationNull;
+        public
+        Set<UUID> uuidSet = Set.of(UUID.randomUUID(), UUID.randomUUID());
     }
 }
