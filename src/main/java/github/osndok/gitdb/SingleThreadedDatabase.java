@@ -148,6 +148,18 @@ class SingleThreadedDatabase implements Database
 
         @Override
         public
+        void allocateId(final GitDbObject object)
+        {
+            if (object._db_id != null)
+            {
+                throw new IllegalArgumentException("object already has already been assigned an id");
+            }
+
+            maybeAssignIds(object);
+        }
+
+        @Override
+        public
         Date getStartTime()
         {
             return startTime;

@@ -124,4 +124,15 @@ interface Transaction
 
         save(object);
     }
+
+    /**
+     * ADVANCED USAGE.
+     *
+     * Causes the database layer to allocate the given object without actually performing a write operation.
+     * If used improperly, this might cause dangling references to unsaved objects.
+     *
+     * @bug Using this method will cause the wrong hook to be called when saving (update instead of create).
+     * @bug Using this method will cause the create() method to errantly throw an exception.
+     */
+    void allocateId(GitDbObject object);
 }
