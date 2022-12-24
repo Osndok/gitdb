@@ -7,10 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Unit test for simple App.
@@ -30,6 +27,7 @@ public class MainTest
         db.initializeGitRepo();
 
         var thing = new Thing();
+        thing.subObject = new SubThing();
         assert thing._db_id == null;
 
         var trans = db.startTransaction();
@@ -68,5 +66,16 @@ public class MainTest
         public Duration durationNull;
         public
         Set<UUID> uuidSet = Set.of(UUID.randomUUID(), UUID.randomUUID());
+        public
+        Map<String, SubThing> map = Map.of("A", new SubThing(), "Beta", new SubThing());
+        public
+        SubThing subObject;
+    }
+
+    private static
+    class SubThing
+    {
+        public
+        UUID subThingField = UUID.randomUUID();
     }
 }
