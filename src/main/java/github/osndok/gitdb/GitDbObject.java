@@ -15,8 +15,10 @@ class GitDbObject
      * If null, this object has not been persisted into the database; otherwise, it represents
      * an identifier that can be used to re-fetch this object later. Once saved into a database
      * transaction, or loaded from disk, this field will be non-null.
+     *
+     * Would be 'final', but it helps downstream unit tests to be able to override it.
      */
-    public final
+    public
     UUID _db_id()
     {
         return _db_id;
@@ -29,8 +31,10 @@ class GitDbObject
      * for more convenient (but less precise) reference to this object that, depending on the situation,
      * may be more suitable for presentation to a human. If the object has not been persisted, this method
      * will return null.
+     *
+     * Would be 'final', but it helps downstream unit tests to be able to override it.
      */
-    public final
+    public
     String _db_id_short()
     {
         if (_db_id_short_memo == null && _db_id != null)
