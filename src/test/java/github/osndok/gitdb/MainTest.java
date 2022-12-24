@@ -24,7 +24,7 @@ public class MainTest
         temp.mkdir();
 
         var db = new SingleThreadedDatabase(temp);
-        db.initializeGitRepo();
+        db.initializeGitRepo("MainTest");
 
         var thing = new Thing();
         thing.subObject = new SubThing();

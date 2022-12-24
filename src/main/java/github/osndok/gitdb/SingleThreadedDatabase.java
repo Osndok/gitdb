@@ -75,7 +75,7 @@ class SingleThreadedDatabase implements Database
     }
 
     public
-    void initializeGitRepo()
+    void initializeGitRepo(String message)
     {
         if (!gitRepo.isDirectory() && !gitRepo.mkdirs())
         {
@@ -85,7 +85,7 @@ class SingleThreadedDatabase implements Database
         git().withArgs("init").run();
 
         // b/c startTransaction() wants to blinkly run 'stash', which does not work on a repo w/o a commit...
-        git().withArgs("commit", "--allow-empty", "--message", "Initialize").run();
+        git().withArgs("commit", "--allow-empty", "--message", message).run();
     }
 
     public
