@@ -77,7 +77,8 @@ interface Transaction
         delete(get(c, id));
     }
 
-    void commit(String message);
+    void commit(String formatString, Object... args);
+
     void abort();
 
     default

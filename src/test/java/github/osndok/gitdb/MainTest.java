@@ -36,7 +36,7 @@ public class MainTest
         var id = thing._db_id();
         assert id != null;
 
-        trans.commit("from main-test");
+        trans.commit("int %d from main-test", thing.integerPrimitive);
 
         assert trans.listIds(Thing.class).iterator().next().equals(id);
 

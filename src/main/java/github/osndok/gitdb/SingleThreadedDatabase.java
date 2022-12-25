@@ -261,9 +261,11 @@ class SingleThreadedDatabase implements Database
 
         @Override
         public
-        void commit(final String message)
+        void commit(final String formatString, Object... args)
         {
             mustBeCurrentTransaction();
+
+            var message = String.format(formatString, args);
 
             for (GitDbObject value : transactionCache.values())
             {
