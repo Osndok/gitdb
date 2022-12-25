@@ -13,6 +13,7 @@ import org.buildobjects.process.ProcBuilder;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -168,7 +169,7 @@ class SingleThreadedDatabase implements Database
         @Override
         public
         <T extends GitDbObject>
-        Iterable<UUID> listIds(final Class<T> c)
+        Collection<UUID> listIds(final Class<T> c)
         {
             mustBeCurrentTransaction();
             var classId = pathingScheme.getClassId(gitRepo, c);

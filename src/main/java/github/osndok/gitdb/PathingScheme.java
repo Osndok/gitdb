@@ -1,6 +1,7 @@
 package github.osndok.gitdb;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.UUID;
 
 public
@@ -19,7 +20,7 @@ interface PathingScheme
 
     Iterable<String> listClassIds(File repoDir);
 
-    Iterable<UUID> listObjectIds(File repoDir, String classId);
+    Collection<UUID> listObjectIds(File repoDir, String classId);
 
     default File getObjectPath(File repoDir, GitDbObject object)
     {

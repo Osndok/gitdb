@@ -1,6 +1,7 @@
 package github.osndok.gitdb;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -11,18 +12,18 @@ interface Transaction
     Date getStartTime();
 
     <T extends GitDbObject>
-    Iterable<UUID> listIds(Class<T> c);
+    Collection<UUID> listIds(Class<T> c);
 
     default
     <T extends GitDbObject>
-    Iterable<T> listObjects(Class<T> c)
+    Collection<T> listObjects(Class<T> c)
     {
         return listObjects(c, listIds(c));
     }
 
     default
     <T extends GitDbObject>
-    Iterable<T> listObjects(Class<T> c, Iterable<UUID> uuids)
+    Collection<T> listObjects(Class<T> c, Iterable<UUID> uuids)
     {
         var results = new ArrayList<T>();
         for (UUID uuid : uuids)
@@ -39,7 +40,7 @@ interface Transaction
      */
     default
     <T extends GitDbObject>
-    Iterable<T> search(Class<T> c, Predicate<T> test)
+    Collection<T> search(Class<T> c, Predicate<T> test)
     {
         var results = new ArrayList<T>();
         for (T t : listObjects(c))

@@ -4,6 +4,7 @@ import github.osndok.gitdb.GitDbObject;
 import github.osndok.gitdb.PathingScheme;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -51,7 +52,7 @@ class StupidlySimplePathing
 
     @Override
     public
-    Iterable<UUID> listObjectIds(final File repoDir, final String classId)
+    Collection<UUID> listObjectIds(final File repoDir, final String classId)
     {
         var dir = new File(repoDir, classId);
 
