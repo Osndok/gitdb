@@ -58,6 +58,10 @@ public class MainTest
 
         file = db.getFile(id, SubThing.class);
 
+        sub.recordThing = new RecordThing("a", "b");
+        trans.save(sub);
+        trans.commit("with record");
+
         // NOTE: subThingField does not appear in the file, but is accessible. It won't be stable until saved.
         System.out.println(ProcBuilder.run("cat", file.toString()));
     }
@@ -93,5 +97,10 @@ public class MainTest
     {
         public
         UUID subThingField = UUID.randomUUID();
+
+        public
+        RecordThing recordThing;
     }
+
+    private record RecordThing(String alpha, String beta) {}
 }
