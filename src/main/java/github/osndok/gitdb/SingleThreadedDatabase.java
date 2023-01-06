@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import github.osndok.gitdb.attach.DropAllAttachmentRequests;
 import github.osndok.gitdb.hooks.GitDbReactiveObject;
 import github.osndok.gitdb.pathing.StupidlySimplePathing;
 import github.osndok.gitdb.serialization.DefaultGitDbDataFormats;
@@ -29,6 +30,9 @@ class SingleThreadedDatabase implements Database
     final
     PathingScheme pathingScheme;
 
+    final
+    AttachmentScheme attachmentScheme;
+
     public
     SingleThreadedDatabase(final File gitRepo)
     {
@@ -45,14 +49,22 @@ class SingleThreadedDatabase implements Database
         var prettyPrinter = new DefaultPrettyPrinter();
         prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
         objectMapper.setDefaultPrettyPrinter(prettyPrinter);
+
+        this.attachmentScheme = new DropAllAttachmentRequests();
     }
 
     public
-    SingleThreadedDatabase(final File gitRepo, final PathingScheme pathingScheme, final ObjectMapper objectMapper)
+    SingleThreadedDatabase(
+            final File gitRepo,
+            final PathingScheme pathingScheme,
+            final ObjectMapper objectMapper,
+            final AttachmentScheme attachmentScheme
+    )
     {
         this.gitRepo = gitRepo;
         this.pathingScheme = pathingScheme;
         this.objectMapper = objectMapper;
+        this.attachmentScheme = attachmentScheme;
     }
 
     Transaction activeTransaction;
@@ -198,6 +210,20 @@ class SingleThreadedDatabase implements Database
             {
                 hook.onMutate(SingleThreadedDatabase.this, this, newClass);
             }
+        }
+
+        @Override
+        public
+        String putAttachment(final File file)
+        {
+            return attachmentScheme.store(gitRepo, file);
+        }
+
+        @Override
+        public
+        File getAttachment(final String fileId)
+        {
+            return attachmentScheme.locate(gitRepo, fileId);
         }
 
         @Override

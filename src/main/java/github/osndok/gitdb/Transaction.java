@@ -1,5 +1,6 @@
 package github.osndok.gitdb;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -150,4 +151,16 @@ interface Transaction
      */
     <T extends GitDbObject>
     void mutate(GitDbObject object, Class<T> newClass);
+
+    /**
+     * @param file - a readable file, outside of the repo, that you wish to embed into the repo.
+     * @return a 'fileId' that can later me used to fetch the file, or null if the file cannot be stored
+     */
+    String putAttachment(File file);
+
+    /**
+     * @param fileId - A string previously returned by putAttachment() in a committed transaction.
+     * @return a read-only file inside the repo that contains the same data as the originally presented file, or null if the given attachment does not exist in the repo
+     */
+    File getAttachment(String fileId);
 }
