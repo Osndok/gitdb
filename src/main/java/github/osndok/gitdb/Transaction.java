@@ -137,4 +137,17 @@ interface Transaction
      * @bug Using this method will cause the create() method to errantly throw an exception.
      */
     void allocateId(GitDbObject object);
+
+    /**
+     * "Move" the underlying data store of an object to a different class in such a way that like-named
+     * fields will be preserved. Intended to be used for such things as subclass specialization and
+     * soft-deletion.
+     *
+     * WARNING: Extra/default fields that appear only in subclasses will not be persisted by this call.
+     * In particular, this means that any 'random' identifier populated in a subclass may present a
+     * different value each time it is fetched until the first time it is saved. If you want such
+     * fields to be 'table', you must immediately fetch and re-save the object after mutating it.
+     */
+    <T extends GitDbObject>
+    void mutate(GitDbObject object, Class<T> newClass);
 }

@@ -1,6 +1,5 @@
 package github.osndok.gitdb;
 
-import github.osndok.gitdb.pathing.StupidlySimplePathing;
 import org.buildobjects.process.ProcBuilder;
 
 import java.io.File;
@@ -27,7 +26,7 @@ public class MainTest
         db.initializeGitRepo("MainTest");
 
         var thing = new Thing();
-        thing.subObject = new SubThing();
+        thing.subObject = new OtherThing();
         assert thing._db_id == null;
 
         var trans = db.startTransaction();
@@ -51,6 +50,16 @@ public class MainTest
 
         var file = db.getFile(id, Thing.class);
         System.out.println(ProcBuilder.run("cat", file.toString()));
+
+        trans.mutate(refetch, SubThing.class);
+        trans.commit("mutated");
+
+        var sub = trans.get(SubThing.class, id);
+
+        file = db.getFile(id, SubThing.class);
+
+        // NOTE: subThingField does not appear in the file, but is accessible. It won't be stable until saved.
+        System.out.println(ProcBuilder.run("cat", file.toString()));
     }
 
     static class Thing extends GitDbObject
@@ -67,13 +76,20 @@ public class MainTest
         public
         Set<UUID> uuidSet = Set.of(UUID.randomUUID(), UUID.randomUUID());
         public
-        Map<String, SubThing> map = Map.of("A", new SubThing(), "Beta", new SubThing());
+        Map<String, OtherThing> map = Map.of("A", new OtherThing(), "Beta", new OtherThing());
         public
-        SubThing subObject;
+        OtherThing subObject;
     }
 
     private static
-    class SubThing
+    class OtherThing
+    {
+        public
+        UUID otherThingField = UUID.randomUUID();
+    }
+
+    private static
+    class SubThing extends Thing
     {
         public
         UUID subThingField = UUID.randomUUID();

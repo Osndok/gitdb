@@ -161,6 +161,37 @@ class SingleThreadedDatabase implements Database
 
         @Override
         public
+        <T extends GitDbObject>
+        void mutate(final GitDbObject object, final Class<T> newClass)
+        {
+            mustBeCurrentTransaction();
+
+            var oldClass = object.getClass();
+
+            var id = object._db_id;
+            if (id == null)
+            {
+                throw new IllegalArgumentException("objects must be saved before they can be mutated");
+            }
+
+            var oldFile = getFile(id, oldClass);
+            var newFile = getFile(id, newClass);
+            var newParent = newFile.getParentFile();
+
+            if (!newParent.isDirectory() && !newParent.mkdirs())
+            {
+                throw new RuntimeException("Unable to create directory: " + newParent);
+            }
+
+            git().withArgs("mv", oldFile.toString(), newFile.toString()).run();
+
+            // We disown the object, so that it can't be used in other transactions, and is immediately refetchable.
+            object._db_transaction_id = null;
+            transactionCache.remove(object);
+        }
+
+        @Override
+        public
         Date getStartTime()
         {
             return startTime;

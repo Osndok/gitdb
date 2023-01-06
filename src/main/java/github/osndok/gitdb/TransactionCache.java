@@ -22,4 +22,10 @@ class TransactionCache
     {
         return objects.values();
     }
+
+    public
+    void remove(final GitDbObject object)
+    {
+        objects.remove(object._db_id);
+    }
 }
