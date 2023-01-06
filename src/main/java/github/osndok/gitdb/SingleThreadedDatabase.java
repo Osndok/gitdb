@@ -174,6 +174,11 @@ class SingleThreadedDatabase implements Database
                 throw new IllegalArgumentException("objects must be saved before they can be mutated");
             }
 
+            if (object instanceof GitDbReactiveObject hook)
+            {
+                hook.beforeMutate(SingleThreadedDatabase.this, this, newClass);
+            }
+
             var oldFile = getFile(id, oldClass);
             var newFile = getFile(id, newClass);
             var newParent = newFile.getParentFile();
@@ -188,6 +193,11 @@ class SingleThreadedDatabase implements Database
             // We disown the object, so that it can't be used in other transactions, and is immediately refetchable.
             object._db_transaction_id = null;
             transactionCache.remove(object);
+
+            if (object instanceof GitDbReactiveObject hook)
+            {
+                hook.onMutate(SingleThreadedDatabase.this, this, newClass);
+            }
         }
 
         @Override

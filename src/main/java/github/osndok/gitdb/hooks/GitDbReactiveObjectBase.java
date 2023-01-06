@@ -47,6 +47,17 @@ class GitDbReactiveObjectBase
 
     @Override
     public
+    <T extends GitDbObject> void beforeMutate(
+            final Database database,
+            final Transaction transaction,
+            final Class<T> newClass
+    )
+    {
+
+    }
+
+    @Override
+    public
     void onCreated(final Database database, final Transaction transaction)
     {
 
@@ -83,6 +94,17 @@ class GitDbReactiveObjectBase
     @Override
     public
     void onTransactionAborted(final Database database, final Transaction transaction)
+    {
+
+    }
+
+    @Override
+    public
+    <T extends GitDbObject> void onMutate(
+            final Database database,
+            final Transaction transaction,
+            final Class<T> newClass
+    )
     {
 
     }
