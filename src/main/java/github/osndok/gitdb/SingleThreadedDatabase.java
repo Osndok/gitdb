@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import github.osndok.gitdb.attach.DropAllAttachmentRequests;
+import github.osndok.gitdb.attach.Sha1AttachmentScheme;
 import github.osndok.gitdb.hooks.GitDbReactiveObject;
 import github.osndok.gitdb.pathing.StupidlySimplePathing;
 import github.osndok.gitdb.serialization.DefaultGitDbDataFormats;
@@ -50,7 +51,7 @@ class SingleThreadedDatabase implements Database
         prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
         objectMapper.setDefaultPrettyPrinter(prettyPrinter);
 
-        this.attachmentScheme = new DropAllAttachmentRequests();
+        this.attachmentScheme = new Sha1AttachmentScheme();
     }
 
     public
@@ -216,7 +217,10 @@ class SingleThreadedDatabase implements Database
         public
         String putAttachment(final File file)
         {
-            return attachmentScheme.store(gitRepo, file);
+            var fileId = attachmentScheme.store(gitRepo, file);
+            var savedFile = attachmentScheme.locate(gitRepo, fileId);
+            git().withArgs("add", savedFile.toString()).run();
+            return fileId;
         }
 
         @Override

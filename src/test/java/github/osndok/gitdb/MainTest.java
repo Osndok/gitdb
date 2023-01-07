@@ -64,6 +64,13 @@ public class MainTest
 
         // NOTE: subThingField does not appear in the file, but is accessible. It won't be stable until saved.
         System.out.println(ProcBuilder.run("cat", file.toString()));
+
+        var fileId = trans.putAttachment(file);
+        System.out.println("Attachment fileId: " + fileId);
+        trans.commit("Attachment");
+
+        file = trans.getAttachment(fileId);
+        System.out.println(ProcBuilder.run("cat", file.toString()));
     }
 
     static class Thing extends GitDbObject
