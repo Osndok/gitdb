@@ -1,6 +1,7 @@
 package github.osndok.gitdb.attach;
 
 import github.osndok.gitdb.AttachmentScheme;
+import github.osndok.gitdb.util.FileUtil;
 import github.osndok.gitdb.util.IdentifierSplitter;
 import org.buildobjects.process.ProcBuilder;
 
@@ -21,7 +22,8 @@ class BaseAttachmentScheme implements AttachmentScheme
     {
         var scheme = getId();
         var hash = hashFileContents(externalFile);
-        var fileId = scheme.getPrettyIdentifier() + ":" + hash;
+        var extension = FileUtil.getExtension(externalFile, "");
+        var fileId = String.format("%s:%s:%s", scheme.getPrettyIdentifier(), extension, hash);
         var internalFile = locate(gitRepo, fileId);
         var parent = internalFile.getParentFile();
         if (!parent.isDirectory() && !parent.mkdirs())
@@ -38,11 +40,15 @@ class BaseAttachmentScheme implements AttachmentScheme
     public
     File locate(final File gitRepo, final String fileId)
     {
-        int colon = fileId.indexOf(':');
-        var beforeColon = fileId.substring(0, colon);
-        var afterColon = fileId.substring(colon + 1);
-        var afterColonSplit = identifierSplitter.split(afterColon).toString();
-        var relativePath = String.format("%s/%s", beforeColon, afterColonSplit);
+        var bits = fileId.split(":");
+        var schemeName = bits[0];
+        var fileExtension = bits[1];
+        var hasFileExtension = !fileExtension.isEmpty();
+        var hash = bits[2];
+        var splitHash = identifierSplitter.split(hash).toString();
+        var relativePath = hasFileExtension
+                ? String.format("%s/%s.%s", schemeName, splitHash, fileExtension)
+                : String.format("%s/%s", schemeName, splitHash);
         return new File(gitRepo, relativePath);
     }
 }

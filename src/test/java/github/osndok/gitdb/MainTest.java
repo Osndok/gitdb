@@ -67,10 +67,13 @@ public class MainTest
 
         var fileId = trans.putAttachment(file);
         System.out.println("Attachment fileId: " + fileId);
-        trans.commit("Attachment");
+        fileId = trans.putAttachment(new File("pom.xml"));
+        System.out.println("Attachment fileId: " + fileId);
+        trans.commit("Attachments");
 
         file = trans.getAttachment(fileId);
-        System.out.println(ProcBuilder.run("cat", file.toString()));
+        assert file.canRead();
+        //System.out.println(ProcBuilder.run("cat", file.toString()));
     }
 
     static class Thing extends GitDbObject
