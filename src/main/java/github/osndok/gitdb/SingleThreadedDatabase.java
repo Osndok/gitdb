@@ -5,10 +5,9 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import github.osndok.gitdb.attach.DropAllAttachmentRequests;
 import github.osndok.gitdb.attach.Sha1AttachmentScheme;
 import github.osndok.gitdb.hooks.GitDbReactiveObject;
-import github.osndok.gitdb.pathing.StupidlySimplePathing;
+import github.osndok.gitdb.pathing.BasicPathing;
 import github.osndok.gitdb.serialization.DefaultGitDbDataFormats;
 import org.buildobjects.process.ProcBuilder;
 
@@ -39,7 +38,7 @@ class SingleThreadedDatabase implements Database
     {
         this.gitRepo = gitRepo;
         // TODO: Save/load these config from the repo, keeping compat, but using the best currently known by default.
-        this.pathingScheme = new StupidlySimplePathing();
+        this.pathingScheme = new BasicPathing();
         this.objectMapper = JsonMapper.builder()
                 .findAndAddModules()
                 .enable(SerializationFeature.INDENT_OUTPUT)
