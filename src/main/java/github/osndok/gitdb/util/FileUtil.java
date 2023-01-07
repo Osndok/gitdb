@@ -6,12 +6,12 @@ public
 class FileUtil
 {
     public static
-    String getExtension(File file, String _default)
+    String getExtension(File file)
     {
         var name = file.getName();
         int lastIndexOf = name.lastIndexOf(".");
         if (lastIndexOf <= 1) {
-            return _default;
+            return null;
         }
         return name.substring(lastIndexOf + 1);
     }

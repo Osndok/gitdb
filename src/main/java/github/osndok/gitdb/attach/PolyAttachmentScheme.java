@@ -41,10 +41,10 @@ class PolyAttachmentScheme implements AttachmentScheme
 
     @Override
     public
-    String store(final File gitRepo, final File file)
+    String store(final File gitRepo, final File file, final String fileExtension)
     {
         var scheme = preferredScheme;
-        var result = scheme.store(gitRepo, file);
+        var result = scheme.store(gitRepo, file, fileExtension);
         var expectedPrefix = getUriPrefix(scheme);
         if (result != null && !result.startsWith(expectedPrefix))
         {

@@ -17,7 +17,7 @@ class DropAllAttachmentRequests
 
     @Override
     public
-    String store(final File gitRepo, final File file)
+    String store(final File gitRepo, final File file, final String fileExtension)
     {
         return null;
     }

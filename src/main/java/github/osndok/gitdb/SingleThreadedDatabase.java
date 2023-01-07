@@ -214,9 +214,9 @@ class SingleThreadedDatabase implements Database
 
         @Override
         public
-        String putAttachment(final File file)
+        String putAttachment(final File file, final String fileExtension)
         {
-            var fileId = attachmentScheme.store(gitRepo, file);
+            var fileId = attachmentScheme.store(gitRepo, file, fileExtension);
             var savedFile = attachmentScheme.locate(gitRepo, fileId);
             git().withArgs("add", savedFile.toString()).run();
             return fileId;

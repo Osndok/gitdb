@@ -1,5 +1,7 @@
 package github.osndok.gitdb;
 
+import github.osndok.gitdb.util.FileUtil;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -156,7 +158,12 @@ interface Transaction
      * @param file - a readable file, outside of the repo, that you wish to embed into the repo.
      * @return a 'fileId' that can later me used to fetch the file, or null if the file cannot be stored
      */
-    String putAttachment(File file);
+    default String putAttachment(File file)
+    {
+        return putAttachment(file, FileUtil.getExtension(file));
+    }
+
+    String putAttachment(File file, String fileExtensionWithoutPeriod);
 
     /**
      * @param fileId - A string previously returned by putAttachment() in a committed transaction.

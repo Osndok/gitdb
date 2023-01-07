@@ -18,11 +18,11 @@ class BaseAttachmentScheme implements AttachmentScheme
 
     @Override
     public
-    String store(final File gitRepo, final File externalFile)
+    String store(final File gitRepo, final File externalFile, final String fileExtension)
     {
         var scheme = getId();
         var hash = hashFileContents(externalFile);
-        var extension = FileUtil.getExtension(externalFile, "");
+        var extension = fileExtension == null ? "" : fileExtension;
         var fileId = String.format("%s:%s:%s", scheme.getPrettyIdentifier(), extension, hash);
         var internalFile = locate(gitRepo, fileId);
         var parent = internalFile.getParentFile();

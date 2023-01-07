@@ -12,11 +12,12 @@ interface AttachmentScheme
     /**
      * Saves the given (external file) into the repo, and returns a key that can be used to fetch it later.
      *
-     * @param gitRepo - the repo into which the file should be stored
-     * @param file - the file (outside of the repo) which should be embedded into the repo
+     * @param gitRepo       - the repo into which the file should be stored
+     * @param file          - the file (outside of the repo) which should be embedded into the repo
+     * @param fileExtension
      * @return a fully qualified attachment uri that can be used to locate & read the file later
      */
-    String store(File gitRepo, File file);
+    String store(File gitRepo, File file, final String fileExtension);
 
     /**
      * Locates a file (in the given git repo) that corresponds to the previously-returned storage key.
