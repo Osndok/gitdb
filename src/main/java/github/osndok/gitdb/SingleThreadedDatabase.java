@@ -10,6 +10,8 @@ import github.osndok.gitdb.hooks.GitDbReactiveObject;
 import github.osndok.gitdb.pathing.BasicPathing;
 import github.osndok.gitdb.serialization.DefaultGitDbDataFormats;
 import org.buildobjects.process.ProcBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,6 +23,9 @@ import java.util.UUID;
 public
 class SingleThreadedDatabase implements Database
 {
+    private static final
+    Logger log = LoggerFactory.getLogger(SingleThreadedDatabase.class);
+
     public final
     ObjectMapper objectMapper;
 
@@ -134,6 +139,7 @@ class SingleThreadedDatabase implements Database
 
             if (existing != null)
             {
+                log.debug("get-cached: {}, {}", c, uuid);
                 return existing;
             }
 
@@ -417,7 +423,7 @@ class SingleThreadedDatabase implements Database
         {
             if (!file.exists())
             {
-                // log/debug
+                log.info("fromJsonFile-dne: {}", file);
                 return null;
             }
 

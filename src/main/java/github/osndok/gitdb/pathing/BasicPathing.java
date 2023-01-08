@@ -95,8 +95,37 @@ class BasicPathing implements PathingScheme
 
             if (file.isFile() && name.endsWith(".json"))
             {
-                ids.add(UUID.fromString(nameSoFar + name));
+                ids.add(toUuid(nameSoFar + name));
             }
         }
+    }
+
+    private
+    UUID toUuid(final String s)
+    {
+        var sb = new StringBuilder();
+        int n = 0;
+        for (char c : s.toCharArray())
+        {
+            // in the form 8-4-4-4-12
+            if (n == 8+4+4+4+12)
+            {
+                break;
+            }
+
+            if (n == 8 || n == 8+4 || n == 8+4+4 || n == 8+4+4+4)
+            {
+                sb.append('-');
+                sb.append(c);
+            }
+            else
+            {
+                sb.append(c);
+            }
+            n++;
+        }
+
+        var uuidString = sb.toString();
+        return UUID.fromString(uuidString);
     }
 }

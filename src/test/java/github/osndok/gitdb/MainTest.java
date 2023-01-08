@@ -37,7 +37,8 @@ public class MainTest
 
         trans.commit("int %d from main-test", thing.integerPrimitive);
 
-        assert trans.listIds(Thing.class).iterator().next().equals(id);
+        var firstThingsId = trans.listIds(Thing.class).iterator().next();
+        assert firstThingsId.equals(id);
 
         var cached = trans.get(Thing.class, id);
         assert cached == thing;
