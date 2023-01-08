@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
+import static github.osndok.gitdb.util.FileUtil.notNull;
+
 /**
  * Goal is to use identifier splitter to make more git-update-friendly directory structures in case
  * there are a large number of objects.
@@ -47,7 +49,7 @@ class BasicPathing implements PathingScheme
     Iterable<String> listClassIds(final File repoDir)
     {
         var dirs = new HashSet<String>();
-        for (File file : repoDir.listFiles())
+        for (File file : notNull(repoDir.listFiles()))
         {
             var name = file.getName();
 
@@ -68,7 +70,7 @@ class BasicPathing implements PathingScheme
 
         var ids = new HashSet<UUID>();
 
-        for (File file : classDir.listFiles())
+        for (File file : notNull(classDir.listFiles()))
         {
             if (file.isDirectory())
             {
@@ -83,7 +85,7 @@ class BasicPathing implements PathingScheme
     private
     void accumulateObjectIds(final HashSet<UUID> ids, final File dir, final String nameSoFar)
     {
-        for (File file : dir.listFiles())
+        for (File file : notNull(dir.listFiles()))
         {
             var name = file.getName();
             if (file.isDirectory())

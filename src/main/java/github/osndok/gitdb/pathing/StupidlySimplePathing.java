@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
+import static github.osndok.gitdb.util.FileUtil.notNull;
+
 public
 class StupidlySimplePathing
         implements PathingScheme
@@ -38,7 +40,7 @@ class StupidlySimplePathing
     Iterable<String> listClassIds(final File repoDir)
     {
         var dirs = new HashSet<String>();
-        for (File file : repoDir.listFiles())
+        for (File file : notNull(repoDir.listFiles()))
         {
             var name = file.getName();
 
@@ -59,7 +61,7 @@ class StupidlySimplePathing
 
         var ids = new HashSet<UUID>();
 
-        for (File file : dir.listFiles())
+        for (File file : notNull(dir.listFiles()))
         {
             var name = file.getName();
 

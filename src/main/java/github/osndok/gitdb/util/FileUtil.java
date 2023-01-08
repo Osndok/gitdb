@@ -15,4 +15,19 @@ class FileUtil
         }
         return name.substring(lastIndexOf + 1);
     }
+
+    public static final File[] EMPTY_ARRAY = new File[0];
+
+    public static
+    File[] notNull(File[] files)
+    {
+        if (files == null)
+        {
+            return EMPTY_ARRAY;
+        }
+        else
+        {
+            return files;
+        }
+    }
 }
