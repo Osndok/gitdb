@@ -20,6 +20,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * TODO: Make empty arrays serialize with the closing bracket on a new line.
+ */
 public
 class SingleThreadedDatabase implements Database
 {
