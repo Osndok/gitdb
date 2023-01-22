@@ -32,7 +32,7 @@ class SingleThreadedDatabase implements Database
     public final
     ObjectMapper objectMapper;
 
-    final
+    public final
     File gitRepo;
 
     final
@@ -105,8 +105,27 @@ class SingleThreadedDatabase implements Database
 
         git().withArgs("init").run();
 
-        // b/c startTransaction() wants to blinkly run 'stash', which does not work on a repo w/o a commit...
+        // b/c startTransaction() wants to blindly run 'stash', which does not work on a repo w/o a commit...
         git().withArgs("commit", "--allow-empty", "--message", message).run();
+    }
+
+    public
+    void initCloneFrom(String source)
+    {
+        if (gitRepo.isDirectory())
+        {
+            throw new IllegalStateException("Already exists: " + gitRepo);
+        }
+
+        if (!gitRepo.mkdirs())
+        {
+            throw new RuntimeException("Unable to create directories: " + gitRepo);
+        }
+
+        git()
+                .withWorkingDirectory(new File("/"))
+                .withArgs("clone", source, gitRepo.getAbsolutePath())
+                .run();
     }
 
     public
