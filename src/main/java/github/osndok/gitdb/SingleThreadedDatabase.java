@@ -496,4 +496,10 @@ class SingleThreadedDatabase implements Database
             out.append('\n');
         }
     }
+
+    public
+    Transaction getActiveTransaction()
+    {
+        return activeTransaction;
+    }
 }
