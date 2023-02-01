@@ -502,4 +502,10 @@ class SingleThreadedDatabase implements Database
     {
         return activeTransaction;
     }
+
+    public
+    void clearActiveTransaction()
+    {
+        activeTransaction = null;
+    }
 }
