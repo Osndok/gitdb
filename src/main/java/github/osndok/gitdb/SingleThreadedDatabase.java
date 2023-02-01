@@ -92,7 +92,10 @@ class SingleThreadedDatabase implements Database
     public
     ProcBuilder git()
     {
-        return new ProcBuilder("git").withWorkingDirectory(gitRepo);
+        return new ProcBuilder("git")
+                .withWorkingDirectory(gitRepo)
+                .withNoTimeout()
+                ;
     }
 
     public
