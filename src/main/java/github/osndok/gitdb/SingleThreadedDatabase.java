@@ -110,6 +110,8 @@ class SingleThreadedDatabase implements Database
 
         // b/c startTransaction() wants to blindly run 'stash', which does not work on a repo w/o a commit...
         git().withArgs("commit", "--allow-empty", "--message", message).run();
+
+        tweakGitConfig();
     }
 
     public
@@ -129,6 +131,15 @@ class SingleThreadedDatabase implements Database
                 .withWorkingDirectory(new File("/"))
                 .withArgs("clone", source, gitRepo.getAbsolutePath())
                 .run();
+
+        tweakGitConfig();
+    }
+
+    private
+    void tweakGitConfig()
+    {
+        // If we are going to be time-critical, it is best not to stop the world for some heavy gc.
+        git().withArgs("config", "gc.auto", "0");
     }
 
     public
