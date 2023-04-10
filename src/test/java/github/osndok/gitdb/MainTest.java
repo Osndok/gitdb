@@ -23,7 +23,7 @@ public class MainTest
         temp.mkdir();
 
         var db = new SingleThreadedDatabase(temp);
-        db.initializeGitRepo("MainTest");
+        db.initializeGitRepo("unit test", "test@example.com", "MainTest");
 
         var thing = new Thing();
         thing.subObject = new OtherThing();
@@ -35,7 +35,7 @@ public class MainTest
         var id = thing._db_id();
         assert id != null;
 
-        trans.commit("int %d from main-test", thing.integerPrimitive);
+        trans.commitPrintF("int %d from main-test", thing.integerPrimitive);
 
         var firstThingsId = trans.listIds(Thing.class).iterator().next();
         assert firstThingsId.equals(id);

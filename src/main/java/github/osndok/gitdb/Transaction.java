@@ -80,7 +80,8 @@ interface Transaction
         delete(get(c, id));
     }
 
-    void commit(String formatString, Object... args);
+    void commit(String message);
+    void commitPrintF(String formatString, Object... args);
 
     void abort();
 

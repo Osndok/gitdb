@@ -99,7 +99,7 @@ class SingleThreadedDatabase implements Database
     }
 
     public
-    void initializeGitRepo(String message)
+    void initializeGitRepo(String name, String email, String message)
     {
         if (!gitRepo.isDirectory() && !gitRepo.mkdirs())
         {
@@ -107,6 +107,8 @@ class SingleThreadedDatabase implements Database
         }
 
         git().withArgs("init").run();
+        git().withArgs("config", "user.name", name).run();
+        git().withArgs("config", "user.email", email).run();
 
         // b/c startTransaction() wants to blindly run 'stash', which does not work on a repo w/o a commit...
         git().withArgs("commit", "--allow-empty", "--message", message).run();
@@ -373,11 +375,10 @@ class SingleThreadedDatabase implements Database
 
         @Override
         public
-        void commit(final String formatString, Object... args)
+        void commit(final String message)
         {
             mustBeCurrentTransaction();
 
-            var message = String.format(formatString, args);
 
             for (GitDbObject value : transactionCache.values())
             {
@@ -404,6 +405,14 @@ class SingleThreadedDatabase implements Database
                     hook.onTransactionCommitted(SingleThreadedDatabase.this, this);
                 }
             }
+        }
+
+        @Override
+        public
+        void commitPrintF(final String formatString, Object... args)
+        {
+            var message = String.format(formatString, args);
+            commit(message);
         }
 
         @Override
