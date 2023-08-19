@@ -70,6 +70,8 @@ interface Transaction
     default
     void delete(GitDbObject object)
     {
+        var id = object._db_id;
+        if (id == null) throw new IllegalStateException("object has no id assigned (not saved?)");
         delete(object.getClass(), object._db_id);
     }
 
@@ -77,6 +79,7 @@ interface Transaction
     <T extends GitDbObject>
     void delete(Class<T> c, UUID id)
     {
+        if (id==null) throw new IllegalArgumentException("id is null");
         delete(get(c, id));
     }
 

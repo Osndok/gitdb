@@ -172,6 +172,9 @@ class SingleThreadedDatabase implements Database
         <T extends GitDbObject>
         T get(final Class<T> c, final UUID uuid)
         {
+            if (c==null) throw new IllegalArgumentException("class is null");
+            if (uuid==null) throw new IllegalArgumentException("uuid is null");
+
             mustBeCurrentTransaction();
             var existing = transactionCache.get(c, uuid);
 
