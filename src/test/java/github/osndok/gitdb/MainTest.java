@@ -49,7 +49,7 @@ public class MainTest
         assert refetch != cached;
         assert refetch.integerPrimitive == cached.integerPrimitive;
 
-        var file = db.getFile(id, Thing.class);
+        var file = db.getFile(Thing.class, id);
         System.out.println(ProcBuilder.run("cat", file.toString()));
 
         trans.mutate(refetch, SubThing.class);
@@ -57,7 +57,7 @@ public class MainTest
 
         var sub = trans.get(SubThing.class, id);
 
-        file = db.getFile(id, SubThing.class);
+        file = db.getFile(SubThing.class, id);
 
         sub.recordThing = new RecordThing("a", "b");
         trans.save(sub);

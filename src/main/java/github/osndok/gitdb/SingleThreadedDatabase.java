@@ -184,7 +184,7 @@ class SingleThreadedDatabase implements Database
                 return existing;
             }
 
-            var file = getFile(uuid, c);
+            var file = getFile(c, uuid);
             var object = fromJsonFile(c, file);
 
             if (object == null)
@@ -238,8 +238,8 @@ class SingleThreadedDatabase implements Database
                 hook.beforeMutate(SingleThreadedDatabase.this, this, newClass);
             }
 
-            var oldFile = getFile(id, oldClass);
-            var newFile = getFile(id, newClass);
+            var oldFile = getFile(oldClass, id);
+            var newFile = getFile(newClass, id);
             var newParent = newFile.getParentFile();
 
             if (!newParent.isDirectory() && !newParent.mkdirs())
@@ -486,8 +486,9 @@ class SingleThreadedDatabase implements Database
         }
     }
 
+    public
     <T extends GitDbObject>
-    File getFile(final UUID uuid, final Class<T> c)
+    File getFile(final Class<T> c, final UUID uuid)
     {
         var classId = pathingScheme.getClassId(gitRepo, c);
         return pathingScheme.getObjectPath(gitRepo, classId, uuid);
