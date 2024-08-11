@@ -13,10 +13,11 @@ import static github.osndok.gitdb.util.FileUtil.notNull;
 
 /**
  * Goal is to use identifier splitter to make more git-update-friendly directory structures in case
- * there are a large number of objects.
+ * there are a large number of objects. This pathing scheme groups objects of particular types together
+ * (which is what most might expect): for example, all of your users are in the 'Users' directory.
  */
 public
-class BasicPathing implements PathingScheme
+class ClassGroupsPathingScheme implements PathingScheme
 {
     private final
     IdentifierSplitter identifierSplitter = IdentifierSplitter.optimizedForThousands();

@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import static github.osndok.gitdb.util.FileUtil.notNull;
 
+@Deprecated
 public
 class StupidlySimplePathing
         implements PathingScheme
