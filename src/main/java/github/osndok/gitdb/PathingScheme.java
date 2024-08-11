@@ -18,9 +18,11 @@ interface PathingScheme
     <T extends GitDbObject>
     String getClassId(File gitRepo, Class<T> c);
 
-    Iterable<String> listClassIds(File repoDir);
-
+    // Geared towards a standard database (list all my User objects).
     Collection<UUID> listObjectIds(File repoDir, String classId);
+
+    // Geared towards a hyperobject database (list all my facets)
+    Collection<String> listClassIds(File repoDir, UUID uuid);
 
     default File getObjectPath(File repoDir, GitDbObject object)
     {

@@ -7,18 +7,18 @@ import github.osndok.gitdb.util.IdentifierSplitter;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.UUID;
 
 import static github.osndok.gitdb.util.FileUtil.notNull;
 
 /**
- * Goal is to use identifier splitter to make more git-update-friendly directory structures in case
- * there are a large number of objects. This pathing scheme groups objects of particular types together
- * (which is what most might expect): for example, all of your users are in the 'Users' directory.
+ * This pathing scheme groups multiple "facets" of a hyperobject together which is identified by a single UUID.
+ * This might be counter-intuitive for most use cases, as instead of "object 123 is a User", we have "object 123
+ * can be a User, but is also an X, Y, and Z". So instead of having "all your users in the Users directory", you
+ * have a bunch of UUID directories, some of which might contain a "User.json" file.
  */
 public
-class ClassGroupsPathingScheme implements PathingScheme
+class HyperObjectPathingScheme implements PathingScheme
 {
     private final
     IdentifierSplitter identifierSplitter = IdentifierSplitter.optimizedForThousands();
@@ -34,7 +34,7 @@ class ClassGroupsPathingScheme implements PathingScheme
 
         var splitPath = identifierSplitter.split(uuid.toString()).toString();
 
-        var basename = String.format("%s/%s.json", classId, splitPath);
+        var basename = String.format("%s/%s.json", splitPath, classId);
         return new File(repoDir, basename);
     }
 
@@ -50,44 +50,49 @@ class ClassGroupsPathingScheme implements PathingScheme
     public
     Collection<UUID> listObjectIds(final File repoDir, final String classId)
     {
-        var classDir = new File(repoDir, classId);
-
-        var ids = new HashSet<UUID>();
-
-        for (File file : notNull(classDir.listFiles()))
-        {
-            if (file.isDirectory())
-            {
-                var name = file.getName();
-                accumulateObjectIds(ids, file, name);
-            }
-        }
-
-        return ids;
+        throw new UnsupportedOperationException("unimplemented: would need to search all object directories");
     }
 
     @Override
     public
     Collection<String> listClassIds(final File repoDir, final UUID uuid)
     {
-        throw new UnsupportedOperationException("unimplemented");
+        var splitPath = identifierSplitter.split(uuid.toString()).toString();
+
+        var objectDirectory = new File(repoDir, splitPath);
+
+        var ids = new HashSet<String>();
+
+        for (File file : notNull(objectDirectory.listFiles()))
+        {
+            if (file.isDirectory())
+            {
+                var subDirectoryOrJsonFile = file.getName();
+                accumulateClassIds(ids, file, subDirectoryOrJsonFile);
+            }
+        }
+
+        return ids;
     }
 
     private
-    void accumulateObjectIds(final HashSet<UUID> ids, final File dir, final String nameSoFar)
+    void accumulateClassIds(final HashSet<String> ids, final File dir, final String nameSoFar)
     {
         for (File file : notNull(dir.listFiles()))
         {
             var name = file.getName();
             if (file.isDirectory())
             {
-                accumulateObjectIds(ids, file, nameSoFar + name);
+                accumulateClassIds(ids, file, nameSoFar + name);
             }
 
             if (file.isFile() && name.endsWith(".json"))
             {
-                ids.add(IdentifierSplitter.toUuid(nameSoFar + name));
+                // todo: test me
+                var classId = name.substring(0, name.length()-".json".length());
+                ids.add(classId);
             }
         }
     }
+
 }

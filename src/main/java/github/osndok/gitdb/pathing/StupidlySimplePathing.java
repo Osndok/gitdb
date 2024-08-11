@@ -6,6 +6,7 @@ import github.osndok.gitdb.PathingScheme;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 import static github.osndok.gitdb.util.FileUtil.notNull;
@@ -38,24 +39,6 @@ class StupidlySimplePathing
 
     @Override
     public
-    Iterable<String> listClassIds(final File repoDir)
-    {
-        var dirs = new HashSet<String>();
-        for (File file : notNull(repoDir.listFiles()))
-        {
-            var name = file.getName();
-
-            if (file.isDirectory() && name.indexOf('.') < 0)
-            {
-                dirs.add(name);
-            }
-        }
-
-        return dirs;
-    }
-
-    @Override
-    public
     Collection<UUID> listObjectIds(final File repoDir, final String classId)
     {
         var dir = new File(repoDir, classId);
@@ -73,5 +56,12 @@ class StupidlySimplePathing
         }
 
         return ids;
+    }
+
+    @Override
+    public
+    Collection<String> listClassIds(final File repoDir, final UUID uuid)
+    {
+        throw new UnsupportedOperationException("unimplemented");
     }
 }
