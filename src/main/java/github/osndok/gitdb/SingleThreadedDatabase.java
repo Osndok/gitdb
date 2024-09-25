@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
@@ -278,6 +280,13 @@ class SingleThreadedDatabase implements Database
 
         @Override
         public
+        ObjectMapper getObjectMapper()
+        {
+            return objectMapper;
+        }
+
+        @Override
+        public
         Date getStartTime()
         {
             return startTime;
@@ -477,7 +486,11 @@ class SingleThreadedDatabase implements Database
 
             try
             {
-                return objectMapper.readValue(file, c);
+                var json = Files.readString(file.toPath());
+                var object = objectMapper.readValue(file, c);
+                object._db_json_data_as_fetched = json;
+                object._db_transaction = new WeakReference<>(this);
+                return object;
             }
             catch (IOException e)
             {
@@ -506,8 +519,12 @@ class SingleThreadedDatabase implements Database
 
         try
         {
-            objectMapper.writeValue(file, object);
+            var json = objectMapper.writeValueAsString(object);
+            Files.writeString(file.toPath(), json);
+            //objectMapper.writeValue(file, object);
             kludge_AppendTrailingNewline(file);
+            // Now that it is saved, if we were to fetch it now, this is the json we would get.
+            object._db_json_data_as_fetched = json;
         }
         catch (IOException e)
         {

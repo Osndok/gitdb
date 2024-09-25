@@ -74,6 +74,18 @@ public class MainTest
 
         file = trans.getAttachment(fileId);
         assert file.canRead();
+
+        refetch = trans.get(SubThing.class, id);
+        var uuidInDb = refetch.uuid;
+        var newUuid = UUID.randomUUID();
+        refetch.uuid = newUuid;
+        var prestine = refetch._as_fetched_from_db(SubThing.class);
+        assert prestine.uuid.equals(uuidInDb);
+        trans.update(refetch);
+        trans.commit("uuid change");
+        prestine = refetch._as_fetched_from_db(SubThing.class);
+        assert prestine.uuid.equals(newUuid);
+
         //System.out.println(ProcBuilder.run("cat", file.toString()));
     }
 

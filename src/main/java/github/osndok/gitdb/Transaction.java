@@ -1,5 +1,6 @@
 package github.osndok.gitdb;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import github.osndok.gitdb.util.FileUtil;
 
 import java.io.File;
@@ -174,4 +175,6 @@ interface Transaction
      * @return a read-only file inside the repo that contains the same data as the originally presented file, or null if the given attachment does not exist in the repo
      */
     File getAttachment(String fileId);
+
+    ObjectMapper getObjectMapper();
 }

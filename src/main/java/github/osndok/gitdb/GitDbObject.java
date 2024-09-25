@@ -1,5 +1,10 @@
 package github.osndok.gitdb;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 /**
@@ -10,6 +15,12 @@ class GitDbObject
 {
     UUID _db_id;
     UUID _db_transaction_id;
+
+    @JsonIgnore
+    WeakReference<Transaction> _db_transaction;
+
+    @JsonIgnore
+    String _db_json_data_as_fetched;
 
     /**
      * If null, this object has not been persisted into the database; otherwise, it represents
@@ -60,6 +71,43 @@ class GitDbObject
             return className + "{" +
                    "_db_id=" + _db_id +
                    '}';
+        }
+    }
+
+    /**
+     * @return This same object, befor
+     * @todo no way to 'freeze' the object in java
+     */
+    public <T>
+    T _as_fetched_from_db(Class<T> t)
+    {
+        if (!getClass().equals(t))
+        {
+            var message = String.format("This is a %s object, not a %s", getClass(), t);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (_db_json_data_as_fetched == null)
+        {
+            return null;
+        }
+
+        var transaction = _db_transaction.get();
+
+        if (transaction == null)
+        {
+            throw new IllegalStateException("transaction is no longer reachable");
+        }
+
+        var objectMapper = transaction.getObjectMapper();
+
+        try
+        {
+            return objectMapper.readValue(_db_json_data_as_fetched, t);
+        }
+        catch (JsonProcessingException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 }
