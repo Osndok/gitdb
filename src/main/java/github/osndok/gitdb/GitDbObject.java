@@ -2,7 +2,6 @@ package github.osndok.gitdb;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.ref.WeakReference;
 import java.util.UUID;
@@ -21,6 +20,9 @@ class GitDbObject
 
     @JsonIgnore
     String _db_json_data_as_fetched;
+
+    @JsonIgnore
+    String _db_json_data_as_saved;
 
     /**
      * If null, this object has not been persisted into the database; otherwise, it represents

@@ -33,7 +33,7 @@ class GitDbReactiveObjectBase
 
     @Override
     public
-    void beforeTransactionCommit(final Database database, final Transaction transaction)
+    void beforeTransactionCommit(final Database database, final Transaction transaction, final CommitInProgress commit)
     {
 
     }

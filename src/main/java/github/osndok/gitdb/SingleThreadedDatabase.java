@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import github.osndok.gitdb.attach.Sha1AttachmentScheme;
+import github.osndok.gitdb.hooks.CommitInProgress;
+import github.osndok.gitdb.hooks.GitDbPreCommitHook;
 import github.osndok.gitdb.hooks.GitDbReactiveObject;
 import github.osndok.gitdb.pathing.ClassGroupsPathingScheme;
 import github.osndok.gitdb.serialization.DefaultGitDbDataFormats;
@@ -18,9 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.nio.file.Files;
-import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * TODO: Make empty arrays serialize with the closing bracket on a new line.
@@ -42,6 +42,9 @@ class SingleThreadedDatabase implements Database
 
     final
     AttachmentScheme attachmentScheme;
+
+    final
+    Set<GitDbPreCommitHook> preCommitHooks = new HashSet<>();
 
     public
     SingleThreadedDatabase(final File gitRepo)
@@ -86,6 +89,24 @@ class SingleThreadedDatabase implements Database
         var retval = activeTransaction = new SingleThreadedTransaction();
         git().withArgs("stash").run();
         return retval;
+    }
+
+    public static class HookAlreadyPresentException extends RuntimeException {}
+
+    @Override
+    public
+    void addPreCommitHook(final GitDbPreCommitHook hook)
+    {
+        if (!preCommitHooks.add(hook)) {
+            throw new HookAlreadyPresentException();
+        }
+    }
+
+    @Override
+    public
+    boolean removePreCommitHook(final GitDbPreCommitHook hook)
+    {
+        return preCommitHooks.remove(hook);
     }
 
     /**
@@ -389,6 +410,13 @@ class SingleThreadedDatabase implements Database
         public
         void commit(final String message)
         {
+            var commit = new CommitInProgress();
+            commit.message = message;
+            commit(commit);
+        }
+
+        void commit(final CommitInProgress commit)
+        {
             mustBeCurrentTransaction();
 
 
@@ -396,22 +424,29 @@ class SingleThreadedDatabase implements Database
             {
                 if (value instanceof GitDbReactiveObject hook)
                 {
-                    hook.beforeTransactionCommit(SingleThreadedDatabase.this, this);
+                    hook.beforeTransactionCommit(SingleThreadedDatabase.this, this, commit);
                 }
+            }
+
+            for (GitDbPreCommitHook preCommitHook : preCommitHooks)
+            {
+                preCommitHook.onCommitInProgress(SingleThreadedDatabase.this, this, commit);
             }
 
             var date = Long.toString(startTime.getTime()/1000);
 
             git()
-                    .withArgs("commit", "--message", message)
+                    .withArgs("commit", "--message", commit.message)
                     .withVar("GIT_AUTHOR_DATE", date)
                     .withVar("GIT_COMMITTER_DATE", date)
                     .run();
 
             // NOTE: We do not clear active transaction, so you can call commit() multiple times.
-
+            // ...but we do consider the now-committed value to be the "as-fetched" value now.
             for (GitDbObject value : transactionCache.values())
             {
+                value._db_json_data_as_fetched = value._db_json_data_as_saved;
+
                 if (value instanceof GitDbReactiveObject hook)
                 {
                     hook.onTransactionCommitted(SingleThreadedDatabase.this, this);
@@ -524,7 +559,7 @@ class SingleThreadedDatabase implements Database
             //objectMapper.writeValue(file, object);
             kludge_AppendTrailingNewline(file);
             // Now that it is saved, if we were to fetch it now, this is the json we would get.
-            object._db_json_data_as_fetched = json;
+            object._db_json_data_as_saved = json;
         }
         catch (IOException e)
         {

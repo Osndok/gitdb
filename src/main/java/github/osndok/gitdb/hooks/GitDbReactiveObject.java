@@ -16,7 +16,7 @@ interface GitDbReactiveObject
     void beforeCreate(Database database, Transaction transaction);
     void beforeUpdate(Database database, Transaction transaction);
     void beforeDelete(Database database, Transaction transaction);
-    void beforeTransactionCommit(Database database, Transaction transaction);
+    void beforeTransactionCommit(Database database, Transaction transaction, CommitInProgress commit);
     void beforeTransactionAbort(Database database, Transaction transaction);
     <T extends GitDbObject>
     void beforeMutate(Database database, Transaction transaction, Class<T> newClass);
